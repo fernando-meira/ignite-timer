@@ -8,6 +8,7 @@ export function DefaultLayout() {
   return (
     <S.LayoutContainer>
       <Header />
+
       <Outlet />
     </S.LayoutContainer>
   );

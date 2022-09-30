@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components';
 
 export const LayoutContainer = styled.div`
   ${({ theme }) => css`
+    width: 90%;
     padding: 3rem;
     margin: 8rem auto;
     border-radius: 8px;
