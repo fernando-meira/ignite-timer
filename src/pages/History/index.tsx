@@ -22,7 +22,11 @@ export function History() {
                 <td>Tarefa</td>
                 <td>20 minutos</td>
                 <td>Há 2 meses</td>
-                <td>Concluído</td>
+                <td>
+                  <S.Status statusColor={index % 2 ? 'green' : 'yellow'}>
+                    {index % 2 ? 'Concluído' : 'Em Andamento'}
+                  </S.Status>
+                </td>
               </tr>
             ))}
           </tbody>

@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 
 export const HistoryContainer = styled.main`
+  height: 100%;
   padding: 5.6rem;
 
   flex: 1;
@@ -14,6 +15,7 @@ export const HistoryContainer = styled.main`
 `;
 
 export const HistoryList = styled.div`
+  max-height: 100%;
   margin-top: 3.2rem;
 
   flex: 1;
@@ -24,6 +26,7 @@ export const HistoryList = styled.div`
 export const Table = styled.table`
   ${({ theme }) => css`
     width: 100%;
+    max-height: 100%;
     min-width: 600px;
     border-collapse: collapse;
 
@@ -63,6 +66,27 @@ export const Table = styled.table`
       &:last-child {
         padding-left: 2.4rem;
       }
+    }
+  `}
+`;
+
+interface StatusProps {
+  statusColor: 'yellow' | 'red' | 'green';
+}
+
+export const Status = styled.span<StatusProps>`
+  ${({ theme, statusColor }) => css`
+    gap: 0.8rem;
+    display: flex;
+    align-items: center;
+
+    ::before {
+      content: '';
+      width: 0.8rem;
+      height: 0.8rem;
+      border-radius: 50%;
+
+      background-color: ${theme.colors[statusColor][500]};
     }
   `}
 `;
