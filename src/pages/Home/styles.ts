@@ -38,8 +38,8 @@ export const FormContainer = styled.div`
   color: ${({ theme }) => theme.colors.gray[100]};
 `;
 
-const BaseInput = styled.input`
-  ${({ theme }) => css`
+const BaseInput = styled.input<{ hasError?: boolean }>`
+  ${({ theme, hasError }) => css`
     border: 0;
     height: 4rem;
     padding: 0 0.8rem;
@@ -58,6 +58,9 @@ const BaseInput = styled.input`
     &::placeholder {
       color: ${theme.colors.gray[500]};
     }
+
+    border-bottom: 1px solid
+      ${hasError ? theme.colors.red[500] : theme.colors.white};
   `}
 `;
 
