@@ -1,4 +1,5 @@
 import { Play } from 'phosphor-react';
+import { useForm } from 'react-hook-form';
 
 import * as S from './styles';
 
@@ -7,12 +8,12 @@ export function Home() {
     <S.HomeContainer>
       <S.Form action="">
         <S.FormContainer>
-          <label htmlFor="task">Vou trabalhar em</label>
+          <label htmlFor="task">Vou trabalhar no projeto</label>
           <S.TaskInput
             id="task"
             type="text"
             list="task-suggestion"
-            placeholder="Dê um nome para o seu projeto"
+            placeholder="..."
           />
 
           <datalist id="task-suggestion">

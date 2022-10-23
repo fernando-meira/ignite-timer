@@ -9,12 +9,19 @@ export const HomeContainer = styled.div`
 `;
 
 export const Form = styled.form`
+  width: 100%;
+  max-width: 65rem;
+
   flex: 1;
   gap: 3.5rem;
   display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: center;
+
+  @media (max-width: 600px) {
+    margin-top: 4rem;
+  }
 `;
 
 export const FormContainer = styled.div`
@@ -67,8 +74,12 @@ export const MinutesAmountInput = styled(BaseInput)`
 `;
 
 export const CountdownContainer = styled.div`
-  gap: 1.6rem;
+  width: 100%;
+
+  gap: 1rem;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
 
   font-size: 16rem;
   line-height: 12.8rem;
@@ -81,6 +92,24 @@ export const CountdownItem = styled.span`
   padding: 3.2rem 1.6rem;
 
   background-color: ${({ theme }) => theme.colors.gray[700]};
+
+  @media (max-width: 800px) {
+    padding: 1.4rem 1rem;
+
+    font-size: 14rem;
+  }
+
+  @media (max-width: 600px) {
+    padding: 1rem 0.8rem;
+
+    font-size: 10rem;
+  }
+
+  @media (max-width: 320px) {
+    padding: 1rem 1rem;
+
+    font-size: 5.5rem;
+  }
 `;
 
 export const Separator = styled.div`
@@ -92,6 +121,24 @@ export const Separator = styled.div`
 
   overflow: hidden;
   color: ${({ theme }) => theme.colors.green[500]};
+
+  @media (max-width: 800px) {
+    padding: 1.4rem 1rem;
+
+    font-size: 14rem;
+  }
+
+  @media (max-width: 600px) {
+    padding: 1rem 0.8rem;
+
+    font-size: 10rem;
+  }
+
+  @media (max-width: 320px) {
+    padding: 1rem 0.8rem;
+
+    font-size: 5rem;
+  }
 `;
 
 export const StartCountdownButton = styled.button`

@@ -13,5 +13,11 @@ export const LayoutContainer = styled.div`
     flex-direction: column;
 
     background-color: ${theme.colors.gray[800]};
+
+    @media (max-width: 320px) {
+      height: auto;
+      padding: 1rem;
+      margin: 2rem auto;
+    }
   `}
 `;
