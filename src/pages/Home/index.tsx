@@ -1,4 +1,5 @@
 import * as zod from 'zod';
+import { useState } from 'react';
 import { Play } from 'phosphor-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,6 +14,12 @@ const newCycleValidationSchema = zod.object({
 
 type NewCycleFormData = zod.infer<typeof newCycleValidationSchema>;
 
+interface Cycle {
+  id: string;
+  task: string;
+  minutesAmount: number;
+}
+
 export function Home() {
   const { register, handleSubmit, watch, formState, reset } =
     useForm<NewCycleFormData>({
@@ -23,13 +30,40 @@ export function Home() {
       },
     });
 
+  const [cycles, setCycles] = useState<Cycle[]>([]);
+  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0);
+  const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
+
   const hasError = formState.errors;
   const isSubmitDisabled = !watch('task') || !watch('minutesAmount');
 
-  function handleCreateNewCycle(data: any) {
-    console.log(data);
+  function handleCreateNewCycle(data: NewCycleFormData) {
+    const { task, minutesAmount } = data;
+    const id = String(new Date().getTime());
+
+    const newCycle: Cycle = {
+      id,
+      task,
+      minutesAmount,
+    };
+
+    setActiveCycleId(id);
+
+    setCycles((cycles) => [...cycles, newCycle]);
+
     reset();
   }
+
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
+
+  const totalSeconds = !!activeCycle ? activeCycle.minutesAmount * 60 : 0;
+  const currentSeconds = !!activeCycle ? totalSeconds - amountSecondsPassed : 0;
+
+  const secondsAmount = currentSeconds % 60;
+  const minutesAmount = Math.floor(currentSeconds / 60);
+
+  const minutes = String(minutesAmount).padStart(2, '0');
+  const seconds = String(secondsAmount).padStart(2, '0');
 
   return (
     <S.HomeContainer>
@@ -45,13 +79,6 @@ export function Home() {
             {...register('task')}
           />
 
-          <datalist id="task-suggestion">
-            <option value="Projeto 1" />
-            <option value="Projeto 2" />
-            <option value="Projeto 3" />
-            <option value="Projeto 4" />
-          </datalist>
-
           <label htmlFor="minutesAmount">Durante</label>
           <S.MinutesAmountInput
             type="number"
@@ -64,7 +91,7 @@ export function Home() {
           <span>Minutos</span>
         </S.FormContainer>
 
-        <Countdown />
+        <Countdown minutes={minutes} seconds={seconds} />
 
         <S.StartCountdownButton type="submit" disabled={isSubmitDisabled}>
           Começar <Play size={24} />

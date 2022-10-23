@@ -1,15 +1,20 @@
 import * as S from './styles';
 
-export function Countdown() {
+interface CountdownProps {
+  minutes: string;
+  seconds: string;
+}
+
+export function Countdown({ minutes, seconds }: CountdownProps) {
   return (
     <S.CountdownContainer>
-      <S.CountdownItem>0</S.CountdownItem>
-      <S.CountdownItem>0</S.CountdownItem>
+      <S.CountdownItem>{minutes[0]}</S.CountdownItem>
+      <S.CountdownItem>{minutes[1]}</S.CountdownItem>
 
       <S.Separator>:</S.Separator>
 
-      <S.CountdownItem>0</S.CountdownItem>
-      <S.CountdownItem>0</S.CountdownItem>
+      <S.CountdownItem>{seconds[0]}</S.CountdownItem>
+      <S.CountdownItem>{seconds[1]}</S.CountdownItem>
     </S.CountdownContainer>
   );
 }
