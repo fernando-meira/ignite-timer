@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import * as S from './styles';
+import { Countdown } from './components';
 
 const newCycleValidationSchema = zod.object({
   task: zod.string().min(1, 'Informe a tarefa'),
@@ -13,7 +14,7 @@ const newCycleValidationSchema = zod.object({
 type NewCycleFormData = zod.infer<typeof newCycleValidationSchema>;
 
 export function Home() {
-  const { register, handleSubmit, watch, formState } =
+  const { register, handleSubmit, watch, formState, reset } =
     useForm<NewCycleFormData>({
       resolver: zodResolver(newCycleValidationSchema),
       defaultValues: {
@@ -27,6 +28,7 @@ export function Home() {
 
   function handleCreateNewCycle(data: any) {
     console.log(data);
+    reset();
   }
 
   return (
@@ -62,15 +64,7 @@ export function Home() {
           <span>Minutos</span>
         </S.FormContainer>
 
-        <S.CountdownContainer>
-          <S.CountdownItem>0</S.CountdownItem>
-          <S.CountdownItem>0</S.CountdownItem>
-
-          <S.Separator>:</S.Separator>
-
-          <S.CountdownItem>0</S.CountdownItem>
-          <S.CountdownItem>0</S.CountdownItem>
-        </S.CountdownContainer>
+        <Countdown />
 
         <S.StartCountdownButton type="submit" disabled={isSubmitDisabled}>
           Começar <Play size={24} />
