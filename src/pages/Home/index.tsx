@@ -1,33 +1,33 @@
+import * as zod from 'zod';
 import { Play } from 'phosphor-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as zod from 'zod';
 
 import * as S from './styles';
 
 const newCycleValidationSchema = zod.object({
   task: zod.string().min(1, 'Informe a tarefa'),
-  minutes: zod
-    .number()
-    .min(5, 'O tempo mínimo para uma tarefa é de 5 minutos.')
-    .max(60, 'O tempo máximo para uma tarefa é de 60 minutos.')
-    .step(5, 'O tempo deve ser múltiplo de 5'),
+  minutesAmount: zod.number().min(5).max(60).step(5),
 });
 
-export function Home() {
-  const { register, handleSubmit, watch, formState } = useForm({
-    resolver: zodResolver(newCycleValidationSchema),
-  });
+type NewCycleFormData = zod.infer<typeof newCycleValidationSchema>;
 
-  console.log('errors', formState.errors);
+export function Home() {
+  const { register, handleSubmit, watch, formState } =
+    useForm<NewCycleFormData>({
+      resolver: zodResolver(newCycleValidationSchema),
+      defaultValues: {
+        task: '',
+        minutesAmount: 0,
+      },
+    });
+
+  const hasError = formState.errors;
+  const isSubmitDisabled = !watch('task') || !watch('minutesAmount');
 
   function handleCreateNewCycle(data: any) {
     console.log(data);
   }
-
-  const hasError = formState.errors;
-
-  const isSubmitDisabled = !watch('task') || !watch('minutes');
 
   return (
     <S.HomeContainer>
@@ -55,8 +55,8 @@ export function Home() {
             type="number"
             placeholder="00"
             id="minutesAmount"
-            hasError={!!hasError?.minutes?.message}
-            {...register('minutes', { valueAsNumber: true })}
+            hasError={!!hasError?.minutesAmount?.message}
+            {...register('minutesAmount', { valueAsNumber: true })}
           />
 
           <span>Minutos</span>
