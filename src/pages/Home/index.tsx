@@ -1,11 +1,12 @@
 import * as zod from 'zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Play } from 'phosphor-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import * as S from './styles';
 import { Countdown } from './components';
+import { differenceInSeconds } from 'date-fns';
 
 const newCycleValidationSchema = zod.object({
   task: zod.string().min(1, 'Informe a tarefa'),
@@ -17,6 +18,7 @@ type NewCycleFormData = zod.infer<typeof newCycleValidationSchema>;
 interface Cycle {
   id: string;
   task: string;
+  startDate: Date;
   minutesAmount: number;
 }
 
@@ -45,9 +47,11 @@ export function Home() {
       id,
       task,
       minutesAmount,
+      startDate: new Date(),
     };
 
     setActiveCycleId(id);
+    setAmountSecondsPassed(0);
 
     setCycles((cycles) => [...cycles, newCycle]);
 
@@ -65,6 +69,28 @@ export function Home() {
   const minutes = String(minutesAmount).padStart(2, '0');
   const seconds = String(secondsAmount).padStart(2, '0');
 
+  useEffect(() => {
+    let interval: number;
+
+    if (!!activeCycle) {
+      interval = setInterval(() => {
+        setAmountSecondsPassed(
+          differenceInSeconds(new Date(), activeCycle.startDate)
+        );
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [activeCycle]);
+
+  useEffect(() => {
+    if (activeCycle) {
+      document.title = `${minutes}:${seconds}`;
+    }
+  }, [minutes, seconds, activeCycle]);
+
   return (
     <S.HomeContainer>
       <S.Form onSubmit={handleSubmit(handleCreateNewCycle)}>
@@ -78,6 +104,10 @@ export function Home() {
             hasError={!!hasError?.task?.message}
             {...register('task')}
           />
+
+          <datalist id="task-suggestion">
+            <option value="Teste" />
+          </datalist>
 
           <label htmlFor="minutesAmount">Durante</label>
           <S.MinutesAmountInput
