@@ -34,10 +34,10 @@ export function Countdown() {
         );
 
         if (secondsDifference >= totalSeconds) {
-          markCurrentCycleAsFinished();
-
-          setSecondsPassed(totalSeconds);
           clearInterval(interval);
+          setSecondsPassed(totalSeconds);
+
+          markCurrentCycleAsFinished();
         } else {
           setSecondsPassed(secondsDifference);
         }

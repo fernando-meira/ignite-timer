@@ -1,13 +1,13 @@
 import { useContext } from 'react';
-import { useForm } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
 import { CyclesContext } from '../..';
 
 import * as S from './styles';
 
 export function NewCycleForm() {
-  const { register, formState } = useForm();
   const { activeCycle } = useContext(CyclesContext);
+  const { register, formState, watch } = useFormContext();
 
   const hasError = formState.errors;
 
