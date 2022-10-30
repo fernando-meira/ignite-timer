@@ -40,7 +40,7 @@ export function History() {
               <tr key={cycle.id}>
                 <td>{cycle.task}</td>
 
-                <td>{cycle.minutesAmount}</td>
+                <td>{cycle.minutesAmount} minutos</td>
 
                 <td>
                   {formatDistanceToNow(new Date(cycle.startDate), {
