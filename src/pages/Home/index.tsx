@@ -6,7 +6,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import * as S from './styles';
 import { Countdown, NewCycleForm } from './components';
-import { CyclesContext } from '../../context/CyclesContext';
+import { useCycles } from '../../context/CyclesContext';
 
 type NewCycleFormData = zod.infer<typeof newCycleValidationSchema>;
 
@@ -16,8 +16,7 @@ const newCycleValidationSchema = zod.object({
 });
 
 export function Home() {
-  const { activeCycle, createNewCycle, interruptCurrentCycle } =
-    useContext(CyclesContext);
+  const { activeCycle, createNewCycle, interruptCurrentCycle } = useCycles();
 
   const newCycleForm = useForm<NewCycleFormData>({
     resolver: zodResolver(newCycleValidationSchema),

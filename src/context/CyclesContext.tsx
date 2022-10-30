@@ -1,24 +1,13 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useReducer, useContext } from 'react';
 
-interface CreateCycleFormData {
-  task: string;
-  minutesAmount: number;
-}
-
-interface Cycle {
-  id: string;
-  task: string;
-  startDate: Date;
-  minutesAmount: number;
-  finishedCycleDate?: Date;
-  interruptedCycleDate?: Date;
-}
+import { CyclesReducerTypesEnum } from '../interfaces/enums';
+import { CycleData, CreateCycleFormData } from '../interfaces/Cycles';
 
 interface CyclesContextType {
-  cycles: Cycle[];
+  cycles: CycleData[];
   amountSecondsPassed: number;
   activeCycleId: string | null;
-  activeCycle: Cycle | undefined;
+  activeCycle: CycleData | undefined;
   interruptCurrentCycle: () => void;
   markCurrentCycleAsFinished: () => void;
   setSecondsPassed: (seconds: number) => void;
@@ -29,59 +18,90 @@ interface CreateCycleProviderProps {
   children: React.ReactNode;
 }
 
+interface CycleStateData {
+  cycles: CycleData[];
+  activeCycleId: string | null;
+}
+
+interface CycleActionType {
+  type: CyclesReducerTypesEnum;
+  payload: any;
+}
+
 export const CyclesContext = createContext({} as CyclesContextType);
 
-export function CycleContextProvider({ children }: CreateCycleProviderProps) {
-  const [cycles, setCycles] = useState<Cycle[]>([]);
+function CycleContextProvider({ children }: CreateCycleProviderProps) {
   const [amountSecondsPassed, setAmountSecondsPassed] = useState(0);
-  const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
+
+  const [cyclesState, dispatch] = useReducer(
+    (state: CycleStateData, action: CycleActionType) => {
+      console.log('state', state);
+      console.log('action', action);
+
+      if (action.type === CyclesReducerTypesEnum.ADD_NEW_CYCLE) {
+        console.log('iniciar o contador');
+        console.log({ state, action });
+        console.log('----------');
+
+        return state;
+      }
+
+      return state;
+    },
+    {
+      cycles: [],
+      activeCycleId: null,
+    }
+  );
+
+  const { cycles, activeCycleId } = cyclesState;
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
 
-  function createNewCycle(data: CreateCycleFormData) {
-    console.log('😁 ~ data', data);
+  const createNewCycle = (data: CreateCycleFormData) => {
     const { task, minutesAmount } = data;
     const id = String(new Date().getTime());
 
-    const newCycle: Cycle = {
+    const newCycle: CycleData = {
       id,
       task,
       minutesAmount,
       startDate: new Date(),
     };
 
-    setActiveCycleId(id);
     setAmountSecondsPassed(0);
 
-    setCycles((cycles) => [...cycles, newCycle]);
-
-    // reset();
-  }
+    dispatch({
+      type: CyclesReducerTypesEnum.ADD_NEW_CYCLE,
+      payload: {
+        newCycle,
+      },
+    });
+  };
 
   function markCurrentCycleAsFinished() {
-    setCycles((cycles) =>
-      cycles.map((cycle) => {
-        if (cycle.id === activeCycleId) {
-          return { ...cycle, finishedCycleDate: new Date() };
-        } else {
-          return cycle;
-        }
-      })
-    );
+    // setCycles((cycles) =>
+    //   cycles.map((cycle) => {
+    //     if (cycle.id === activeCycleId) {
+    //       return { ...cycle, finishedCycleDate: new Date() };
+    //     } else {
+    //       return cycle;
+    //     }
+    //   })
+    // );
   }
 
   function interruptCurrentCycle() {
-    setCycles((cycles) =>
-      cycles.map((cycle) => {
-        if (cycle.id === activeCycleId) {
-          return { ...cycle, interruptedCycleDate: new Date() };
-        } else {
-          return cycle;
-        }
-      })
-    );
-
-    setActiveCycleId(null);
+    // setCycles((cycles) =>
+    //   cycles.map((cycle) => {
+    //     if (cycle.id === activeCycleId) {
+    //       return { ...cycle, interruptedCycleDate: new Date() };
+    //     } else {
+    //       return cycle;
+    //     }
+    //   })
+    // );
+    // setActiveCycleId(null);
   }
 
   function setSecondsPassed(seconds: number) {
@@ -105,3 +125,15 @@ export function CycleContextProvider({ children }: CreateCycleProviderProps) {
     </CyclesContext.Provider>
   );
 }
+
+function useCycles(): CyclesContextType {
+  const context = useContext(CyclesContext);
+
+  if (!context) {
+    throw new Error('useCycles must be used within an CycleProvider');
+  }
+
+  return context;
+}
+
+export { useCycles, CycleContextProvider };
