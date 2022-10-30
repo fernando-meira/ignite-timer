@@ -6,8 +6,6 @@ import { CyclesContext } from '../../context/CyclesContext';
 export function History() {
   const { cycles } = useContext(CyclesContext);
 
-  console.log('😁 ~ cycles', cycles);
-
   return (
     <S.HistoryContainer>
       <S.HistoryList>

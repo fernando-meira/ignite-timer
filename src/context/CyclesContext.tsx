@@ -25,7 +25,7 @@ interface CycleStateData {
 
 interface CycleActionType {
   type: CyclesReducerTypesEnum;
-  payload: any;
+  payload?: any;
 }
 
 export const CyclesContext = createContext({} as CyclesContextType);
@@ -35,15 +35,42 @@ function CycleContextProvider({ children }: CreateCycleProviderProps) {
 
   const [cyclesState, dispatch] = useReducer(
     (state: CycleStateData, action: CycleActionType) => {
-      console.log('state', state);
-      console.log('action', action);
-
       if (action.type === CyclesReducerTypesEnum.ADD_NEW_CYCLE) {
-        console.log('iniciar o contador');
-        console.log({ state, action });
-        console.log('----------');
+        return {
+          ...state,
+          cycles: [...state.cycles, action.payload.newCycle],
+          activeCycleId: action.payload.newCycle.id,
+        };
+      }
 
-        return state;
+      if (action.type === CyclesReducerTypesEnum.INTERRUPTED_CURRENT_CYCLE) {
+        return {
+          ...state,
+          cycles: state.cycles.map((cycle) => {
+            if (cycle.id === state.activeCycleId) {
+              return { ...cycle, interruptedCycleDate: new Date() };
+            } else {
+              return state;
+            }
+          }),
+          activeCycleId: null,
+        };
+      }
+
+      if (
+        action.type === CyclesReducerTypesEnum.MARK_CURRENT_CYCLE_AS_FINISHED
+      ) {
+        return {
+          ...state,
+          cycles: state.cycles.map((cycle) => {
+            if (cycle.id === state.activeCycleId) {
+              return { ...cycle, finishedCycleDate: new Date() };
+            } else {
+              return state;
+            }
+          }),
+          activeCycleId: null,
+        };
       }
 
       return state;
@@ -80,28 +107,15 @@ function CycleContextProvider({ children }: CreateCycleProviderProps) {
   };
 
   function markCurrentCycleAsFinished() {
-    // setCycles((cycles) =>
-    //   cycles.map((cycle) => {
-    //     if (cycle.id === activeCycleId) {
-    //       return { ...cycle, finishedCycleDate: new Date() };
-    //     } else {
-    //       return cycle;
-    //     }
-    //   })
-    // );
+    dispatch({
+      type: CyclesReducerTypesEnum.MARK_CURRENT_CYCLE_AS_FINISHED,
+    });
   }
 
   function interruptCurrentCycle() {
-    // setCycles((cycles) =>
-    //   cycles.map((cycle) => {
-    //     if (cycle.id === activeCycleId) {
-    //       return { ...cycle, interruptedCycleDate: new Date() };
-    //     } else {
-    //       return cycle;
-    //     }
-    //   })
-    // );
-    // setActiveCycleId(null);
+    dispatch({
+      type: CyclesReducerTypesEnum.INTERRUPTED_CURRENT_CYCLE,
+    });
   }
 
   function setSecondsPassed(seconds: number) {
