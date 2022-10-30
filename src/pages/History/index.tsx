@@ -1,10 +1,26 @@
 import { useContext } from 'react';
+import ptBR from 'date-fns/locale/pt-BR';
+
+import { CycleData } from '../../interfaces/Cycles';
+import { CyclesContext } from '../../context/CyclesContext';
 
 import * as S from './styles';
-import { CyclesContext } from '../../context/CyclesContext';
+import { formatDistanceToNow } from 'date-fns';
 
 export function History() {
   const { cycles } = useContext(CyclesContext);
+
+  const renderStatus = (cycle: CycleData) => {
+    if (cycle.finishedCycleDate) {
+      return <S.Status statusColor="green">Concluído</S.Status>;
+    }
+
+    if (cycle.interruptedCycleDate) {
+      return <S.Status statusColor="red">Interrompido</S.Status>;
+    }
+
+    return <S.Status statusColor="yellow">Em andamento</S.Status>;
+  };
 
   return (
     <S.HistoryContainer>
@@ -20,16 +36,20 @@ export function History() {
           </thead>
 
           <tbody>
-            {Array.from({ length: 8 }).map((_, index) => (
-              <tr key={index}>
-                <td>Tarefa</td>
-                <td>20 minutos</td>
-                <td>Há 2 meses</td>
+            {cycles.map((cycle) => (
+              <tr key={cycle.id}>
+                <td>{cycle.task}</td>
+
+                <td>{cycle.minutesAmount}</td>
+
                 <td>
-                  <S.Status statusColor={index % 2 ? 'green' : 'yellow'}>
-                    {index % 2 ? 'Concluído' : 'Em Andamento'}
-                  </S.Status>
+                  {formatDistanceToNow(new Date(cycle.startDate), {
+                    addSuffix: true,
+                    locale: ptBR,
+                  })}
                 </td>
+
+                <td>{renderStatus(cycle)}</td>
               </tr>
             ))}
           </tbody>

@@ -27,7 +27,7 @@ export function cycleReducers(state: CycleStateData, action: CycleActionType) {
         if (cycle.id === state.activeCycleId) {
           return { ...cycle, interruptedCycleDate: new Date() };
         } else {
-          return state;
+          return cycle;
         }
       }),
       activeCycleId: null,
@@ -41,7 +41,7 @@ export function cycleReducers(state: CycleStateData, action: CycleActionType) {
         if (cycle.id === state.activeCycleId) {
           return { ...cycle, finishedCycleDate: new Date() };
         } else {
-          return state;
+          return cycle;
         }
       }),
       activeCycleId: null,

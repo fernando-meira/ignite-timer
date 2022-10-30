@@ -48,6 +48,11 @@ function CycleContextProvider({ children }: CreateCycleProviderProps) {
       if (storedStateAsJSON) {
         return JSON.parse(storedStateAsJSON);
       }
+
+      return {
+        cycles: [],
+        activeCycleId: null,
+      };
     }
   );
 
