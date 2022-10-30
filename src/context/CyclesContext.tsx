@@ -1,12 +1,20 @@
-import { createContext, useState, useReducer, useContext } from 'react';
+import {
+  useState,
+  useEffect,
+  useReducer,
+  useContext,
+  createContext,
+} from 'react';
 
 import { cycleReducers } from '../reducers/cycles/reducer';
+import { LocalStorageApplicationName } from '../interfaces/enums';
 import { CycleData, CreateCycleFormData } from '../interfaces/Cycles';
 import {
   addNewCycleAction,
   interruptCurrentCycleAction,
   markCurrentCycleAsFinishedAction,
 } from '../reducers/cycles/actions';
+import { differenceInSeconds } from 'date-fns';
 
 interface CyclesContextType {
   cycles: CycleData[];
@@ -26,16 +34,33 @@ interface CreateCycleProviderProps {
 export const CyclesContext = createContext({} as CyclesContextType);
 
 function CycleContextProvider({ children }: CreateCycleProviderProps) {
-  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0);
+  const [cyclesState, dispatch] = useReducer(
+    cycleReducers,
+    {
+      cycles: [],
+      activeCycleId: null,
+    },
+    () => {
+      const storedStateAsJSON = localStorage.getItem(
+        LocalStorageApplicationName.APPLICATION_STORAGE_ID
+      );
 
-  const [cyclesState, dispatch] = useReducer(cycleReducers, {
-    cycles: [],
-    activeCycleId: null,
-  });
+      if (storedStateAsJSON) {
+        return JSON.parse(storedStateAsJSON);
+      }
+    }
+  );
 
   const { cycles, activeCycleId } = cyclesState;
-
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
+
+  const [amountSecondsPassed, setAmountSecondsPassed] = useState(() => {
+    if (activeCycle) {
+      return differenceInSeconds(new Date(), new Date(activeCycle.startDate));
+    }
+
+    return 0;
+  });
 
   const createNewCycle = (data: CreateCycleFormData) => {
     const { task, minutesAmount } = data;
@@ -64,6 +89,15 @@ function CycleContextProvider({ children }: CreateCycleProviderProps) {
   function setSecondsPassed(seconds: number) {
     setAmountSecondsPassed(seconds);
   }
+
+  useEffect(() => {
+    const cyclesStateJSON = JSON.stringify(cyclesState);
+
+    localStorage.setItem(
+      LocalStorageApplicationName.APPLICATION_STORAGE_ID,
+      cyclesStateJSON
+    );
+  }, [cycles]);
 
   return (
     <CyclesContext.Provider

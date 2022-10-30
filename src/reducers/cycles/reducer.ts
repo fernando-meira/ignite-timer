@@ -20,8 +20,6 @@ export function cycleReducers(state: CycleStateData, action: CycleActionType) {
     };
   }
 
-  switch
-
   if (action.type === CyclesReducerTypesEnum.INTERRUPTED_CURRENT_CYCLE) {
     return {
       ...state,
